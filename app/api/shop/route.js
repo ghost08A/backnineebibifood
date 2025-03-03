@@ -1,0 +1,13 @@
+import { NextResponse } from "next/server";
+import { supabase } from "@/lib/supabaseClient";
+
+// ดึงข้อมูลทั้งหมดจาก Supabase
+export async function GET() {
+  const { data, error } = await supabase.from("shop").select("*");
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json(data, { status: 200 });
+}
