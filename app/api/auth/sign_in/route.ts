@@ -1,16 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabaseClient";
+import bcrypt from "bcryptjs";
 
-// ดึงข้อมูลทั้งหมดจาก Supabase (GET)
-export async function GET() {
-  const { data, error } = await supabase.from("user").select("*");
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
 
-  return NextResponse.json(data, { status: 200 });
-}
+
 
 // เพิ่มข้อมูลใหม่ลง Supabase (POST)
 export async function POST(req: NextRequest) {
@@ -31,11 +25,14 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
+    const hashedPassword = await bcrypt.hash(password, parseInt(process.env.SALT_ROUNDS!));
+     
+
 
     // เพิ่มข้อมูลลง Supabase
     const { data, error } = await supabase.from("user").insert([
-      {  name, email, address, phone, password }
-    ]);
+      {  name, email, address, phone, password: hashedPassword },
+    ]).select("*"); 
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
