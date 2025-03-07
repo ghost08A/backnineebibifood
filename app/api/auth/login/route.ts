@@ -12,14 +12,14 @@ export async function GET(req: NextRequest) {
   const decoded = await verifyToken(req);
   console.log("✅ Decoded Token:", decoded);
 
-  // ✅ ตรวจสอบว่ามี Token และเป็น `JwtPayload`
+  //ตรวจสอบว่ามี Token 
   if (!decoded || typeof decoded === "string" || !(decoded as JwtPayload).id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const userId = (decoded as JwtPayload).id;
 
-  // ✅ ดึงข้อมูลจาก Supabase
+  // ✅ ดึงข้อมูล
   const { data, error } = await supabase
     .from("user")
     .select("*")
@@ -39,12 +39,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json(); // อ่าน JSON จาก Request
     const { email, password } = body;
 
-    console.log("✅ Request received");
-
-    // ✅ Debug เช็ค Request Headers
-    console.log("🔹 Headers:", req.headers.get("Content-Type"));
-
-    console.log("🔹 Request Body:", body);
+   
     // ตรวจสอบค่าว่าง
     if (!email || !password) {
       return NextResponse.json(
@@ -53,7 +48,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // ดึงข้อมูล User จาก Supabase
+    // ดึงข้อมูล User 
     const { data: users, error } = await supabase
       .from("user")
       .select("id, name, email, password")
@@ -67,9 +62,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const user = users[0]; // ได้ข้อมูล User มา
+    const user = users[0]; 
 
-    // ตรวจสอบรหัสผ่าน (Compare Hash)
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
       return NextResponse.json(

@@ -5,7 +5,7 @@ import { JwtPayload } from "jsonwebtoken";
 
 export async function PUT(req: NextRequest) {
   try {
-    // ✅ ตรวจสอบ Token
+    // ตรวจสอบ Token
     const decoded = await verifyToken(req);
     if (!decoded || typeof decoded === "string" || !(decoded as JwtPayload).id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -13,7 +13,7 @@ export async function PUT(req: NextRequest) {
 
     const userId = (decoded as JwtPayload).id;
 
-    // ✅ อ่านข้อมูลที่ต้องการอัปเดตจาก body
+    // อ่านข้อมูลอัปเดตจาก body
     const body = await req.json();
     const { name, address, phone } = body;
 
@@ -21,7 +21,7 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ error: "No data to update" }, { status: 400 });
     }
 
-    // ✅ อัปเดตข้อมูลใน Supabase
+    //อัปเดตข้อมูล
     const { data, error } = await supabase
       .from("user")
       .update({ name, address, phone })

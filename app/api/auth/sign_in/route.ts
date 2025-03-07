@@ -3,16 +3,13 @@ import { supabase } from "@/lib/supabaseClient";
 import bcrypt from "bcryptjs";
 
 
-
-
-
-// เพิ่มข้อมูลใหม่ลง Supabase (POST)
+// เพิ่มข้อมูล
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json(); // อ่าน JSON จาก Request
     const { name, email, address, phone, password } = body;
 
-    // ตรวจสอบค่าว่าง
+    
     if (!name || !email) {
       return NextResponse.json(
         { error: "Missing 'name' or 'email' in request body" },
@@ -25,11 +22,11 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
+
+    //hash password
     const hashedPassword = await bcrypt.hash(password, parseInt(process.env.SALT_ROUNDS!));
      
-
-
-    // เพิ่มข้อมูลลง Supabase
+    // เพิ่มข้อมูล
     const { data, error } = await supabase.from("user").insert([
       {  name, email, address, phone, password: hashedPassword },
     ]).select("*"); 
