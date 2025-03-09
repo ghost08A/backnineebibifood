@@ -1,19 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabaseClient";
 
+
+
 //The function extracts the shop ID from the request URL.
-export async function GET(req: NextRequest, context: { params: { id?: string } }) {
+export async function GET(req: NextRequest, {params}: {params: Promise<{id: string}>}) {
   
 //Uses context.params to get the id parameter.
-  const params = await context.params;
+  const id = (await params).id;
 
 //Checks if the shop ID exists in the request parameters.
-  if (!params || !params.id) {
+  if (!params || !id) {
     return NextResponse.json({ error: "Missing shop ID" }, { status: 400 });
   }
 
   //Parses the shop ID as an integer using parseInt().
-  const shopId = parseInt(params.id, 10);
+  const shopId = parseInt(id, 10);
 
   console.log("ID ร้านค้า:", shopId);
 
